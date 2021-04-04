@@ -1,0 +1,2 @@
+# Ignore firebase SDK folder and contents:
+**/firebase-sdk/*
