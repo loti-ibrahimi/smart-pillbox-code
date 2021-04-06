@@ -1,3 +1,5 @@
 # Ignore firebase SDK folder and contents:
 **/firebase-sdk/* 
 *boxLid-test.py
+*twilio.env
+*old-pillSchedule.py
