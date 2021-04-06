@@ -30,16 +30,16 @@ def detect(channel):
     if GPIO.input(channel) == 0: #if low (0) sensor value
         print('Sensor low detected  [',GPIO.input(channel),'] - [Box Lid Opened]; Magnet far; [', timestamp, ']')
         # Sending data to 'boxAccessData' in Firebase Realtime.
-        # Update the '1-set' data under 'boxAccessData' 
+        # Update the 'current' data under 'boxAccessData' 
         db.reference('/').child('pillBoxData').child('current').set(data)
-        # Update the '2-push' data under 'boxAccessData', with a history of pushes. 
+        # Update the 'history' data under 'boxAccessData', with a history of pushes. 
         db.reference('/').child('pillBoxData').child('history').push(data)
 
     else: 
         print('Sensor high detected [',GPIO.input(channel),'] - [Box Lid CLosed]; Magnet near; [', timestamp, ']')
-        # Update the '1-set' data under 'boxAccessData' 
+        # Update the 'current' data under 'boxAccessData' 
         db.reference('/').child('pillBoxData').child('current').set(data)
-        # Update the '2-push' data under 'boxAccessData', with a history of pushes. 
+        # Update the 'history' data under 'boxAccessData', with a history of pushes. 
         db.reference('/').child('pillBoxData').child('history').push(data)
 
 # Main
