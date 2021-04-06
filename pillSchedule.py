@@ -24,6 +24,9 @@ dbfirestore = firestore.client()
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.OUT) # Blue LED (e.g. compartment 1)
+GPIO.setup(23, GPIO.OUT) # Yellow LED (e.g compartment 2)
+GPIO.setup(24, GPIO.OUT) # Red LED (e.g compartment 3)
+GPIO.setup(25, GPIO.OUT) # Green LED (e.g compartment 4)
 
 print('')
 print('============================================================')
@@ -90,17 +93,34 @@ for doc in docData:
                     time.sleep(30) # Stay lit for 30 sec.
                     GPIO.output(18, False) # Turn off Blue LED
                     print('Until next time!')
+                elif pillCompartment == 2:
+                    GPIO.output(23, True) # Turn on Yellow LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    print('Until next time!')
+                elif pillCompartment == 3:
+                    GPIO.output(24, True) # Turn on Red LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(24, False) # Turn off Red LED
+                    print('Until next time!')
+                elif pillCompartment == 4:
+                    GPIO.output(25, True) # Turn on Green LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(25, False) # Turn off Green LED
+                    print('Until next time!')
                 else:
                     GPIO.output(18, False) # Turn off Blue LED
-                    print("***** TEST - Not compartment number 1 *****")
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    GPIO.output(24, False) # Turn off Red LED
+                    GPIO.output(25, False) # Turn off Green LED
                 break
 
-            elif currentBoxLidStatus == 1 and abs(pillTimeInMinutes-currentTimeMinutes) >5 and pillDay != currentDay:
-                print('*************************')
-                print('!ALERT - PillBox is open!')
-                print('*************************')
-                print('<send alert via Twilio to contact details>')
-                break
+            # elif currentBoxLidStatus == 1 and abs(pillTimeInMinutes-currentTimeMinutes) >5 and pillDay != currentDay:
+            #     print('*************************')
+            #     print('!ALERT - PillBox is open!')
+            #     print('*************************')
+            #     print('<send alert via Twilio to contact details>')
+            #     break
             else:
                 print('The next schedule is not due for another while')
                 break
