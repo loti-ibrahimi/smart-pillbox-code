@@ -12,10 +12,10 @@ def main():
     pillType = 'PillA'
     pillQuantity = 1
     '''
-    <Function placeholder brainstorm> 
-    * option 1 : implement the pillschedule db check script here and send texts as a 'schedule alert'
-    * option 2 : create a new event in the realtime database that is defined by current schedule check/boxlid check to determine if lid opened at incorrect times - warning alet.
-    * option 3 : include both options 1 + option 2. 
+    <Summary Checklist> 
+    * Check TwilioSMSAlert event in the realtime database
+    * Trigger SMS ALert if TwilioSMSAlert = True.
+    * Set the event to False once Alert is complete.
 
     Cost is 7c per SMS, budget is €14. Roughly 200 SMS.
     '''
