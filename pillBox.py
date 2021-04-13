@@ -24,7 +24,7 @@ def detect(channel):
     # Defined data variables to be sent to Firebase.
     data = {
         'boxLidStatus': boxLidStatus,
-        'timeStamp': timestamp,
+        'timestamp': timestamp,
     }
 
     if GPIO.input(channel) == 0: #if low (0) sensor value
