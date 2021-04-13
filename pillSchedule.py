@@ -87,10 +87,12 @@ for doc in docData:
             if abs(pillTimeInMinutes-currentTimeMinutes)<=1 and pillDay == currentDay:
                 # Alert Event triggered - RTDB TwilioSMS alert updated to True.
                 twilioAlert = True
+                timestamp = datetime.datetime.now().strftime('Time: %H:%M:%S, Date: %d/%m/%Y')
 
                 # Defined data variables to be sent to Firebase.
                 data = {
-                    'TwilioSMSAlert': twilioAlert,   
+                    'twilioSMSAlert': twilioAlert,
+                    'timestamp': timestamp,
                 }
 
                 print('*! Realtime DB Alert event set to trigger Twilio SMS notification !*')
