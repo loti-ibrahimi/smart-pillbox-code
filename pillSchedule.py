@@ -89,24 +89,24 @@ for doc in docData:
                 print('- Pill Quantity:', pillQuantity)
                 print('+=================================================+')
                 if pillCompartment == 1:
-                    GPIO.output(18, True) # Turn on Blue LED
+                    GPIO.output(25, True) # Turn on Green LED
                     time.sleep(30) # Stay lit for 30 sec.
-                    GPIO.output(18, False) # Turn off Blue LED
+                    GPIO.output(25, False) # Turn off Green LED
                     print('Until next time!')
                 elif pillCompartment == 2:
-                    GPIO.output(23, True) # Turn on Yellow LED
-                    time.sleep(30) # Stay lit for 30 sec.
-                    GPIO.output(23, False) # Turn off Yellow LED
-                    print('Until next time!')
-                elif pillCompartment == 3:
                     GPIO.output(24, True) # Turn on Red LED
                     time.sleep(30) # Stay lit for 30 sec.
                     GPIO.output(24, False) # Turn off Red LED
                     print('Until next time!')
-                elif pillCompartment == 4:
-                    GPIO.output(25, True) # Turn on Green LED
+                elif pillCompartment == 3:
+                    GPIO.output(23, True) # Turn on Yellow LED
                     time.sleep(30) # Stay lit for 30 sec.
-                    GPIO.output(25, False) # Turn off Green LED
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    print('Until next time!')
+                elif pillCompartment == 4:
+                    GPIO.output(18, True) # Turn on Blue LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(18, False) # Turn off Blue LED
                     print('Until next time!')
                 else:
                     GPIO.output(18, False) # Turn off Blue LED
