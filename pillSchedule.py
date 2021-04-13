@@ -33,7 +33,7 @@ print('============================================================')
 print('          Fetching current event data from Realtime DB      ')
 print('============================================================')
 print('')
-rtdb = db.reference('pillBoxData').child('current').get()
+rtdb = db.reference('pillBoxData').child('boxSensors').get()
 currentBoxLidStatus = rtdb['boxLidStatus']
 if currentBoxLidStatus == 1:
     print('* Current BOX LID Status:', currentBoxLidStatus, '(Closed)')
@@ -70,6 +70,9 @@ for doc in docData:
         pillType = schedule['pillType']
         pillQuantity = schedule['pillQuantity']
 
+        # Default value for SMS alert event
+        twilioAlert = False
+
         # Display all data that was chosen from the Database for schedule analysis
         print('')
         print('Schedule preview          ==> ', schedule)
@@ -78,10 +81,24 @@ for doc in docData:
         print('Pill-Time | In Minutes    ==> ', pillTime,' | ', pillTimeInMinutes)
         print('Current-Time | In Minutes ==> ', currentTime,' | ', currentTimeMinutes)
         print('+--------------------------------------------------------------------+')
-        # Loop check the different conditions/events.
+        # # Loop check the different conditions/events.
         while True: 
-            # If the current time is within 5 minutes of the scheduled time kick off.
-            if abs(pillTimeInMinutes-currentTimeMinutes)<=5 and pillDay == currentDay:
+            # If the current time is within 5 minutes of the scheduled time kick off 
+            if abs(pillTimeInMinutes-currentTimeMinutes)<=1 and pillDay == currentDay:
+                # Alert Event triggered - RTDB TwilioSMS alert updated to True.
+                twilioAlert = True
+
+                # Defined data variables to be sent to Firebase.
+                data = {
+                    'TwilioSMSAlert': twilioAlert,   
+                }
+
+                print('*! Realtime DB Alert event set to trigger Twilio SMS notification !*')
+                db.reference('/').child('pillBoxData').child('boxAlerts').set(data)
+                # Update the 'history' data under 'boxAccessData', with a history of pushes. 
+                db.reference('/').child('pillBoxData').child('boxAlertMemory').push(data)
+                
+                print('')
                 print('A scheduled pill is now due!')
                 print('+================  PILL DETAILS ==================+')
                 print('- Compartment: ', pillCompartment)
@@ -115,12 +132,40 @@ for doc in docData:
                     GPIO.output(25, False) # Turn off Green LED
                 break
 
-            # elif currentBoxLidStatus == 1 and abs(pillTimeInMinutes-currentTimeMinutes) >5 and pillDay != currentDay:
-            #     print('*************************')
-            #     print('!ALERT - PillBox is open!')
-            #     print('*************************')
-            #     print('<send alert via Twilio to contact details>')
-            #     break
+            elif abs(pillTimeInMinutes-currentTimeMinutes)<=5 and pillDay == currentDay:
+                print('')
+                print('A scheduled pill is now due!')
+                print('+================  PILL DETAILS ==================+')
+                print('- Compartment: ', pillCompartment)
+                print('- Pill Type:', pillType)
+                print('- Pill Quantity:', pillQuantity)
+                print('+=================================================+')
+                if pillCompartment == 1:
+                    GPIO.output(25, True) # Turn on Green LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(25, False) # Turn off Green LED
+                    print('Until next time!')
+                elif pillCompartment == 2:
+                    GPIO.output(24, True) # Turn on Red LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(24, False) # Turn off Red LED
+                    print('Until next time!')
+                elif pillCompartment == 3:
+                    GPIO.output(23, True) # Turn on Yellow LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    print('Until next time!')
+                elif pillCompartment == 4:
+                    GPIO.output(18, True) # Turn on Blue LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(18, False) # Turn off Blue LED
+                    print('Until next time!')
+                else:
+                    GPIO.output(18, False) # Turn off Blue LED
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    GPIO.output(24, False) # Turn off Red LED
+                    GPIO.output(25, False) # Turn off Green LED
+                break
             else:
                 print('The next schedule is not due for another while')
                 break
