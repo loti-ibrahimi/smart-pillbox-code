@@ -19,28 +19,28 @@ sense_pin = 17
 def detect(channel):
     timestamp = datetime.datetime.now().strftime('Time: %H:%M:%S, Date: %d/%m/%Y')
 
-    boxLid = int(GPIO.input(channel))
+    boxLidStatus = int(GPIO.input(channel))
 
     # Defined data variables to be sent to Firebase.
     data = {
-        'boxLidStatus': boxLid,
-        'timeStamp': timestamp,      
+        'boxLidStatus': boxLidStatus,
+        'timeStamp': timestamp,
     }
 
     if GPIO.input(channel) == 0: #if low (0) sensor value
         print('Sensor low detected  [',GPIO.input(channel),'] - [Box Lid Opened]; Magnet far; [', timestamp, ']')
         # Sending data to 'boxAccessData' in Firebase Realtime.
         # Update the 'current' data under 'boxAccessData' 
-        db.reference('/').child('pillBoxData').child('current').set(data)
+        db.reference('/').child('pillBoxData').child('boxSensors').set(data)
         # Update the 'history' data under 'boxAccessData', with a history of pushes. 
-        db.reference('/').child('pillBoxData').child('history').push(data)
+        db.reference('/').child('pillBoxData').child('boxSensorMemory').push(data)
 
     else: 
         print('Sensor high detected [',GPIO.input(channel),'] - [Box Lid CLosed]; Magnet near; [', timestamp, ']')
         # Update the 'current' data under 'boxAccessData' 
-        db.reference('/').child('pillBoxData').child('current').set(data)
+        db.reference('/').child('pillBoxData').child('boxSensors').set(data)
         # Update the 'history' data under 'boxAccessData', with a history of pushes. 
-        db.reference('/').child('pillBoxData').child('history').push(data)
+        db.reference('/').child('pillBoxData').child('boxSensorMemory').push(data)
 
 # Main
 def main():
