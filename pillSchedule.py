@@ -93,6 +93,8 @@ for doc in docData:
                 data = {
                     'twilioSMSAlert': twilioAlert,
                     'timestamp': timestamp,
+                    'pillDue': pillType,
+                    'quantityDue': pillQuantity,
                 }
 
                 print('*! Realtime DB Alert event set to trigger Twilio SMS notification !*')
