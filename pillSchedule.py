@@ -70,9 +70,6 @@ for doc in docData:
         pillType = schedule['pillType']
         pillQuantity = schedule['pillQuantity']
 
-        # Default value for SMS alert event
-        twilioAlert = False
-
         # Display all data that was chosen from the Database for schedule analysis
         print('')
         print('Schedule preview          ==> ', schedule)
@@ -81,13 +78,13 @@ for doc in docData:
         print('Pill-Time | In Minutes    ==> ', pillTime,' | ', pillTimeInMinutes)
         print('Current-Time | In Minutes ==> ', currentTime,' | ', currentTimeMinutes)
         print('+--------------------------------------------------------------------+')
-        # # Loop check the different conditions/events.
+        # Loop through & check if schedules are met.
         while True: 
             # If the current time is within 5 minutes of the scheduled time kick off 
             if abs(pillTimeInMinutes-currentTimeMinutes)<=1 and pillDay == currentDay:
                 # Alert Event triggered - RTDB TwilioSMS alert updated to True.
                 twilioAlert = True
-                timestamp = datetime.datetime.now().strftime('Time: %H:%M:%S, Date: %d/%m/%Y')
+                timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
                 # Defined data variables to be sent to Firebase.
                 data = {
@@ -171,6 +168,6 @@ for doc in docData:
                     GPIO.output(25, False) # Turn off Green LED
                 break
             else:
-                print('The next schedule is not due for another while')
+                print('This schedule is not due for another while')
                 break
 
