@@ -48,7 +48,7 @@ def listener(event):
         # Current Timestamp
         timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
-        # Pull out the Pill Data associated with the recent SMS event from the realtime db.
+        # Pull out the Pill Data associated with the recent alert event from the realtime db.
         pillDue = event.data['pillDue']
         quantityDue = event.data['quantityDue']
 
