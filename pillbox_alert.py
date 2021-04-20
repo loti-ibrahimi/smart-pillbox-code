@@ -55,7 +55,7 @@ def listener(event):
 
         # Text message to be sent.
         message = client.messages.create(
-            body='Hey'+ userName +'! Your scheduled pill is now due - ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.',
+            body='Hey '+ userName +'! Your scheduled pill is now due - ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.',
             from_='+16124306181',
             # Stored in my local env. variable file twilio.env
             to=os.environ['MY_PHONE_NUMBER']
