@@ -116,6 +116,8 @@ for doc in docData:
                 
                 print('')
                 print('Your scheduled pill is now due.')
+                print('+ Scheduled Time:', pillTime)
+                print('+ Current Time:', currentTime)
                 print('+================  PILL DETAILS ==================+')
                 print('- Compartment: ', pillCompartment)
                 print('- Pill Type:', pillType)
@@ -156,6 +158,7 @@ for doc in docData:
                 print('')
                 print('Next schedule is near, dont forget to take your pills!')
                 print('+ Scheduled Time:', pillTime)
+                print('+ Current Time:', currentTime)
                 print('+================  PILL DETAILS ==================+')
                 print('- Compartment: ', pillCompartment)
                 print('- Pill Type:', pillType)
