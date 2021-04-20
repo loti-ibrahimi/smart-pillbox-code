@@ -49,19 +49,20 @@ def listener(event):
         timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
         # Pull out the Pill Data associated with the recent alert event from the realtime db.
+        userName = event.data['username']
         pillDue = event.data['pillDue']
         quantityDue = event.data['quantityDue']
 
         # Text message to be sent.
         message = client.messages.create(
-            body='Scheduled Pill is now Due. \n ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.',
+            body='Hey ',+userName+,'! Your scheduled pill is now due - ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.',
             from_='+16124306181',
             # Stored in my local env. variable file twilio.env
             to=os.environ['MY_PHONE_NUMBER']
         )
         print(message.sid)
         print('>----- Alert SMS being sent -----<')
-        print('Schedule Pill is now Due. \n ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.')
+        print('Hey ',+userName+,'! Your scheduled pill is now due - ('+ timestamp +') \n * Pill Type: '+ pillDue +'\n * Quantity: '+ str(quantityDue) +' \n Please access your Pillbox.')
         print('>--------------------------------<')
         
         # Message has been sent. 
