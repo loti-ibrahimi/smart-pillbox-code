@@ -54,15 +54,20 @@ time.sleep(10) # sleep 60 seconds.
 docData = dbfirestore.collection('pillPlan').where('boxID', '==', 'box1').stream()
 
 for doc in docData:
-    pillPlanData = doc.to_dict()
     '''
+    pillPlanData = doc.to_dict()
     print('{} => {}'.format(doc.id, doc.to_dict()))
     print('+------------------------------------+')
     print('NEW', pillPlanData)
     print('<=================================================================>')
     '''
+    # Get user details
+    userDetails = doc.get('contactDetails')
+
+    # Get all schedules
     schedules = doc.get('pillSchedules')
     for schedule in schedules:
+        # Schedule variables
         pillDay = schedule['day']
         todays_date = date.today()
         currentDay = calendar.day_name[todays_date.weekday()]
@@ -73,6 +78,9 @@ for doc in docData:
         pillCompartment = schedule['pillCompartment']
         pillType = schedule['pillType']
         pillQuantity = schedule['pillQuantity']
+
+        # User details
+        userName = userDetails['name']
 
         '''
         # Display all data that was chosen from the Database for schedule analysis
@@ -98,6 +106,7 @@ for doc in docData:
                     'timestamp': timestamp,
                     'pillDue': pillType,
                     'quantityDue': pillQuantity,
+                    'username': userName
                 }
 
                 print('*! Realtime DB Alert event set to trigger Twilio SMS notification !*')
@@ -106,7 +115,7 @@ for doc in docData:
                 db.reference('/').child('pillBoxData').child('boxAlertMemory').push(data)
                 
                 print('')
-                print('A scheduled pill is now due!')
+                print('Your scheduled pill is now due.')
                 print('+================  PILL DETAILS ==================+')
                 print('- Compartment: ', pillCompartment)
                 print('- Pill Type:', pillType)
@@ -143,41 +152,41 @@ for doc in docData:
                     GPIO.output(25, False) # Turn off Green LED
                 break
 
-            # elif abs(pillTimeInMinutes-currentTimeMinutes)<=5 and pillDay == currentDay:
-            #     print('')
-            #     print('A scheduled pill is due shortly!')
-            #     print('+================  PILL DETAILS ==================+')
-            #     print('- Compartment: ', pillCompartment)
-            #     print('- Pill Type:', pillType)
-            #     print('- Pill Quantity:', pillQuantity)
-            #     print('+=================================================+')
-            #     if pillCompartment == 1:
-            #         GPIO.output(25, True) # Turn on Green LED
-            #         time.sleep(30) # Stay lit for 30 sec.
-            #         GPIO.output(25, False) # Turn off Green LED
-            #         print('Until next time!')
-            #     elif pillCompartment == 2:
-            #         GPIO.output(24, True) # Turn on Red LED
-            #         time.sleep(30) # Stay lit for 30 sec.
-            #         GPIO.output(24, False) # Turn off Red LED
-            #         print('Until next time!')
-            #     elif pillCompartment == 3:
-            #         GPIO.output(23, True) # Turn on Yellow LED
-            #         time.sleep(30) # Stay lit for 30 sec.
-            #         GPIO.output(23, False) # Turn off Yellow LED
-            #         print('Until next time!')
-            #     elif pillCompartment == 4:
-            #         GPIO.output(18, True) # Turn on Blue LED
-            #         time.sleep(30) # Stay lit for 30 sec.
-            #         GPIO.output(18, False) # Turn off Blue LED
-            #         print('Until next time!')
-            #     else:
-            #         GPIO.output(18, False) # Turn off Blue LED
-            #         GPIO.output(23, False) # Turn off Yellow LED
-            #         GPIO.output(24, False) # Turn off Red LED
-            #         GPIO.output(25, False) # Turn off Green LED
-            #     # break
-
+            elif abs(pillTimeInMinutes-currentTimeMinutes)<=5 and pillDay == currentDay:
+                print('')
+                print('Next schedule is near, dont forget to take your pills!')
+                print('+ Scheduled Time:', pillTime)
+                print('+================  PILL DETAILS ==================+')
+                print('- Compartment: ', pillCompartment)
+                print('- Pill Type:', pillType)
+                print('- Pill Quantity:', pillQuantity)
+                print('+=================================================+')
+                if pillCompartment == 1:
+                    GPIO.output(25, True) # Turn on Green LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(25, False) # Turn off Green LED
+                    print('Until next time!')
+                elif pillCompartment == 2:
+                    GPIO.output(24, True) # Turn on Red LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(24, False) # Turn off Red LED
+                    print('Until next time!')
+                elif pillCompartment == 3:
+                    GPIO.output(23, True) # Turn on Yellow LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    print('Until next time!')
+                elif pillCompartment == 4:
+                    GPIO.output(18, True) # Turn on Blue LED
+                    time.sleep(30) # Stay lit for 30 sec.
+                    GPIO.output(18, False) # Turn off Blue LED
+                    print('Until next time!')
+                else:
+                    GPIO.output(18, False) # Turn off Blue LED
+                    GPIO.output(23, False) # Turn off Yellow LED
+                    GPIO.output(24, False) # Turn off Red LED
+                    GPIO.output(25, False) # Turn off Green LED
+                    break
             else:
                 break
     else:
