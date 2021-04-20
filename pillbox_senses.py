@@ -16,7 +16,7 @@ firebase_admin.initialize_app(cred, {
 
 sense_pin = 17
 
-def detect_open_box(channel):
+def detect(channel):
     timestamp = datetime.datetime.now().strftime('Time: %H:%M:%S, Date: %d/%m/%Y')
 
     boxLidStatus = int(GPIO.input(channel))
