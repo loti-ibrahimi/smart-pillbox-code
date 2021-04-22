@@ -51,7 +51,7 @@ print('Checking Schedules...')
 time.sleep(10) # sleep 60 seconds.
 
 # Pill Plan for Box 1
-docData = dbfirestore.collection('pillPlan').where('boxID', '==', 'box1').stream()
+docData = dbfirestore.collection('pillPlan').where('boxID', '==', 'pillBox_1').stream()
 
 for doc in docData:
     '''
