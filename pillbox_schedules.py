@@ -238,7 +238,8 @@ for doc in docData:
 
     else:
         if currentBoxLidStatus == 0:
-            print('\n Warning - Pillbox lid is open & no schedule is currently due!')
+            timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
+            print('\n Warning - Pillbox lid is open & no schedule is currently due! \n (', timestamp ,')')
             '''
             Warning (Red Alert) Event - Box opened outside of scheduled hours.
             --------------------------------------------------------------------------
