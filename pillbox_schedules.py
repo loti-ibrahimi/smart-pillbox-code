@@ -1,4 +1,30 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
+'''
+Author: Loti Ibrahimi (20015453)
+Course: BSc (Hons) in the Internet of Things.
+
+Script Overview:
+* Setup GPIO pins for the four different LEDs. 
+* Access the Firestore DB pillPlans and check the data for 'pillBox_1'. # Each pillbox will have a pillplan assigned to it, with ID being pillBox_<number>
+* While at it, also retrieve sensor event data from Firebase Realtime DB. 
+- Currently will have access to both the static DB & the realtime DB values needed.
+
+* Loop through the 'pillSchedules' array from 'pillbox_1' data.
+
+Schedule Check algorithm:
+1. Pull out all useful schedule variables from the DB that will be used: 
+- 'pillDay' e.g. 'Monday'
+- 'pillTime' e.g. '15:00'
+By subtracting the current real time (in minutes) from the pillTime (converted in minutes), thresholds could be set within scheduled times to perform checks. 
+In this case 5 mins was decided as a suitable threshold, with 1 min being critical alert stage.
+(This script was configured in Crontab to run automatically every 5 mins, hence why 5 mins was)
+
+* When a schedule is met, a respective LED compartmet [1-4] is lit (showing what pill to take).
+* Alert events of either 'scheduleAlert' or 'warningAlert' will be triggered on two conditions:
+1. scheduleAlert: schedule is met (within 1 min threshold) SMS alert notification with pill details.
+2. warningAlert: check RTDB if pillbox lid is open outside of scheduled times - warning SMS.
+'''
 
 # Import required libraries
 import time, datetime
@@ -29,26 +55,16 @@ GPIO.setup(24, GPIO.OUT) # Red LED (e.g compartment 3)
 GPIO.setup(25, GPIO.OUT) # Green LED (e.g compartment 4)
 
 print('')
-print('============================================================')
-print('     Fetching current box sensor data from Realtime DB      ')
-print('============================================================')
-print('')
-rtdb = db.reference('pillBoxData').child('boxSensors').get()
-currentBoxLidStatus = rtdb['boxLidStatus']
-if currentBoxLidStatus == 1:
-    print('* Current BOX LID Status:', currentBoxLidStatus, '(Closed)')
-else:
-    print('* Current BOX LID Status:', currentBoxLidStatus, '(Open)')
-print('')
-
-print('')
 print('')
 print('============================================================')
-print('                Fetching data from Firestore')
+print('                Fetching data from Firestore                ')
+print('                           ++++++                           ')
+print('    Fetching current box sensor data from Firebase RTDB     ')
 print('============================================================')
 print('')
-print('Checking Schedules...')
-time.sleep(10) # sleep 60 seconds.
+print('Scanning..')
+print('')
+time.sleep(5) # sleep 60 seconds.
 
 # Pill Plan for Box 1
 docData = dbfirestore.collection('pillPlan').where('boxID', '==', 'pillBox_1').stream()
@@ -63,6 +79,12 @@ for doc in docData:
     '''
     # Get user details
     userDetails = doc.get('contactDetails')
+
+    '''
+    Box Sensor Readings. 
+    '''
+    rtdb = db.reference('pillBoxData').child('boxSensors').get()
+    currentBoxLidStatus = rtdb['boxLidStatus']
 
     # Get all schedules
     schedules = doc.get('pillSchedules')
@@ -80,7 +102,8 @@ for doc in docData:
         pillQuantity = schedule['pillQuantity']
 
         # User details
-        userName = userDetails['name']
+        contactName = userDetails['name']
+        contactNumber = userDetails['phone']
 
         '''
         # Display all data that was chosen from the Database for schedule analysis
@@ -96,24 +119,35 @@ for doc in docData:
         while True: 
             # If the current time is within 5 minutes of the scheduled time kick off 
             if abs(pillTimeInMinutes-currentTimeMinutes)<=1 and pillDay == currentDay:
-                # Alert Event triggered - RTDB TwilioSMS alert updated to True.
-                twilioAlert = True
+                '''
+                Alert Event - Schedule Met
+                ----------------------------------
+                '''
+                # Alert Event triggered - RTDB alertState alert updated to True.
+                scheduleAlert = True
                 timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
+                
                 # Defined data variables to be sent to Firebase.
                 data = {
-                    'twilioSMSAlert': twilioAlert,
+                    'alertType': 'scheduleAlert',
+                    'alertInfo': 'schedule_due',
+                    'alertState': scheduleAlert,
                     'timestamp': timestamp,
                     'pillDue': pillType,
                     'quantityDue': pillQuantity,
-                    'username': userName
+                    'contactName': contactName,
+                    'contactNumber': contactNumber
                 }
 
-                print('*! Realtime DB Alert event set to trigger Twilio SMS notification !*')
+                print('*! Alert event sent to Realtime DB !*')
                 db.reference('/').child('pillBoxData').child('boxAlerts').set(data)
                 # Update the 'history' data under 'boxAccessData', with a history of pushes. 
                 db.reference('/').child('pillBoxData').child('boxAlertMemory').push(data)
-                
+                '''
+                ----------------------------------
+                '''
+
                 print('')
                 print('Your scheduled pill is now due.')
                 print('+ Scheduled Time:', pillTime)
@@ -126,7 +160,7 @@ for doc in docData:
                 time.sleep(5)
                 print('')
                 print('Please take ',pillQuantity, ' pills from the highlighted compartment.')
-                # Light appropriate Pill Compartment
+                # Light appropriate Pill Compartment depending on schedule compartment number.
                 if pillCompartment == 1:
                     GPIO.output(25, True) # Turn on Green LED
                     time.sleep(30) # Stay lit for 30 sec.
@@ -194,10 +228,45 @@ for doc in docData:
                     GPIO.output(24, False) # Turn off Red LED
                     GPIO.output(25, False) # Turn off Green LED
                 break
-            else:
+
+            elif currentBoxLidStatus == 1:
+                print('* Current BOX LID Status:', currentBoxLidStatus, '(Closed)')
                 break
+            else:
+                print('* Current BOX LID Status:', currentBoxLidStatus, '(Open)')
+                break
+
     else:
-        print('No schedule due at the moment.')
+        if currentBoxLidStatus == 0:
+            print('\n Warning - Pillbox lid is open & no schedule is currently due!')
+            '''
+            Warning (Red Alert) Event - Box opened outside of scheduled hours.
+            --------------------------------------------------------------------------
+            '''
+            # Alert Event triggered - RTDB alertState alert updated to True.
+            warningAlert = True
+            timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
+
+            # Defined data variables to be sent to Firebase.
+            data = {
+                'alertType': 'warningAlert',
+                'alertInfo': 'lid_warning_alert',
+                'alertState': warningAlert,
+                'timestamp': timestamp,
+                'contactName': contactName,
+                'contactNumber': contactNumber
+            }
+
+            print('*! Warning Alert event sent to Realtime DB !*')
+            db.reference('/').child('pillBoxData').child('boxAlerts').set(data)
+            # Update the 'history' data under 'boxAccessData', with a history of pushes. 
+            db.reference('/').child('pillBoxData').child('boxAlertMemory').push(data)
+            '''
+            ---------------------------------------------------------------------------
+            '''
+            break
+        else: 
+            print('\n All is well! No schedule is due at the moment.')
         break
         
 
