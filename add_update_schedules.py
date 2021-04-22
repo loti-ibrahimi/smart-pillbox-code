@@ -69,6 +69,14 @@ data = {
         'schedule_id': 'sched4comp3qt3',
         'time': '17:30'
     },
+    {  
+        'day': 'Thursday',
+        'pillCompartment': 4,
+        'pillQuantity': 3,
+        'pillType': 'pill_g',
+        'schedule_id': 'sched5comp4qt3',
+        'time': '18:40'
+    }
     ]
 }
 
