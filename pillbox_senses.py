@@ -28,7 +28,7 @@ firebase_admin.initialize_app(cred, {
 sense_pin = 17
 
 def detect(channel):
-    timestamp = datetime.datetime.now().strftime('Time: %H:%M:%S, Date: %d/%m/%Y')
+    timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
     boxLidStatus = int(GPIO.input(channel))
 
@@ -65,7 +65,7 @@ def main():
 
     try:
         while True:
-            timestamp = datetime.datetime.now().strftime('%H:%M:%S')
+            timestamp = datetime.datetime.now().strftime('%H:%M')
             print('System active check', timestamp)
             time.sleep(60)
 
