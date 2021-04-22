@@ -1,4 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
+'''
+Author: Loti Ibrahimi (20015453)
+Course: BSc (Hons) in the Internet of Things.
+
+Script Overview:
+* Look out for & read in data from the hall-effect sensor. (1:magnetic field near or 0:magnetic field far)
+* Sending this data to a Realtime DB. 
+* RTDB defined under pillBoxData > boxSensors / boxSensorMemory
+* Continues to listen and post new events.  
+'''
 
 # Import required libraries
 import time, datetime
@@ -44,7 +55,12 @@ def detect(channel):
 
 # Main
 def main():
-    print('CTRL + C to quit')
+    print('')
+    print('=====================================================')
+    print('      Actively Monitoring Pillbox sensor data        ')
+    print('=====================================================')
+    print('\n [CTRL + C to quit]')
+    print('')
     detect(sense_pin)
 
     try:
