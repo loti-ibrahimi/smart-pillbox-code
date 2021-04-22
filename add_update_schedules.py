@@ -1,3 +1,14 @@
+#!/usr/bin/python3
+
+'''
+Author: Loti Ibrahimi (20015453)
+Course: BSc (Hons) in the Internet of Things.
+
+Script Overview:
+* Defining data & creating a document to be added (if document doesn't alrady exist) else update the Firestore DB.
+* Quick Solution, however a CRUD webapp interface would be ideal - which I didnt get around to doing.
+'''
+
 # Firebase Admin SDK 
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -6,14 +17,6 @@ cred = credentials.Certificate('/home/pi/Documents/Smart-Pillbox/firebase-sdk/th
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://thesmartpillbox-ffb73-default-rtdb.firebaseio.com/'
 })
-
-'''
-<Script Overview> 
-* Defining data & creating a document to be added (if document doesn't alrady exist) else update the Firestore DB.
-
-Quick Solution for an ideal CRUD webapp interface - which I didnt get around to.
-
-'''
 
 db = firestore.client()
 
@@ -25,13 +28,13 @@ data = {
         'email': 'edoe@outlook.com',
         'name': 'Emma',
         'surname': 'Doe',
-        'phone': '0854211853'
+        'phone': '+353854368533'
     },
     'contactDetails': {
         'email': 'loti.ibrahimi@outlook.com',
         'name': 'Loti',
         'surname': 'Ibrahimi',
-        'phone': '0834616893'
+        'phone': '+353834616893'
     },
     'pillSchedules': [
     {  
