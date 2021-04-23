@@ -118,7 +118,7 @@ def listener(event):
 
         # Text message to be sent.
         message = client.messages.create(
-            body='Hey '+ contactName +'! Your pillbox has been opened outside of scheduled times! - ('+ timestamp +') \n * Alert info : '+ alertInfo +' \n Please check your Pillbox.',
+            body='Hey '+ contactName +'! Your pillbox was opened outside of scheduled times! - ('+ timestamp +') \n * Alert info : '+ alertInfo +' \n Please check your Pillbox.',
             from_='+16124306181',
             # Retrieving the number from the event itself.
             to=contactNumber
@@ -128,7 +128,7 @@ def listener(event):
         print(message.sid)
 
         print('>-------------------- Alert SMS being sent --------------------<')
-        print('Hey ', contactName ,'! Your pillbox has been opened outside of scheduled times! - (', timestamp ,') \n * Alert info : ', alertInfo ,' \n Please check your Pillbox.')
+        print('Hey ', contactName ,'! Your pillbox was opened outside of scheduled times! - (', timestamp ,') \n * Alert info : ', alertInfo ,' \n Please check your Pillbox.')
         print('>--------------------------------------------------------------<')
         
         # Warning SMS has been sent. 
