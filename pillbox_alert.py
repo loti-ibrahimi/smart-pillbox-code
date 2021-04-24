@@ -138,7 +138,7 @@ def listener(event):
         # - alertState updated to False.
         data = {
             'alertType': 'warningAlert',
-            'alertInfo': 'schedule_due',
+            'alertInfo': 'lid_warning_alert',
             'alertState': warningAlert,
             'timestamp': timestamp,
             'contactName': contactName,
