@@ -49,7 +49,7 @@ data = {
         'day': 'Monday',
         'pillCompartment': 2,
         'pillQuantity': 1,
-        'pillType': 'pill_bw',
+        'pillType': 'pill_2',
         'schedule_id': 'sched2comp2qt1',
         'time': '14:45'
     },
@@ -57,7 +57,7 @@ data = {
         'day': 'Monday',
         'pillCompartment': 1,
         'pillQuantity': 2,
-        'pillType': 'pill_w',
+        'pillType': 'pill_1',
         'schedule_id': 'sched3comp1qt2',
         'time': '15:30'
     },
@@ -65,17 +65,17 @@ data = {
         'day': 'Monday',
         'pillCompartment': 3,
         'pillQuantity': 3,
-        'pillType': 'pill_b',
+        'pillType': 'pill_3',
         'schedule_id': 'sched4comp3qt3',
         'time': '17:30'
     },
     {  
-        'day': 'Thursday',
+        'day': 'Saturday',
         'pillCompartment': 4,
-        'pillQuantity': 3,
-        'pillType': 'pill_g',
-        'schedule_id': 'sched5comp4qt3',
-        'time': '18:40'
+        'pillQuantity': 2,
+        'pillType': 'pill_4',
+        'schedule_id': 'sched5comp4qt2',
+        'time': '16:30'
     }
     ]
 }
