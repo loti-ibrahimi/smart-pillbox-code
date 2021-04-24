@@ -24,6 +24,13 @@ In this case 5 mins was decided as a suitable threshold, with 1 min being critic
 * Alert events of either 'scheduleAlert' or 'warningAlert' will be triggered on two conditions:
 1. scheduleAlert: schedule is met (within 1 min threshold) SMS alert notification with pill details.
 2. warningAlert: check RTDB if pillbox lid is open outside of scheduled times - warning SMS.
+
+LCD display is set to display different text depending on specific conditions e.g.:
+1. Checking schedules.
+2. Schedule Met.
+3. Compartment Alert (i.e. right pill compartment is about to light)
+4. Schedule Details (i.e. pill type/quantity to take)
+4. Pillbox was opened outside of scheduled times.
 '''
 
 # Import required libraries
@@ -31,6 +38,7 @@ import time, datetime
 import calendar
 from datetime import date
 import RPi.GPIO as GPIO
+import grove_rgb_lcd
 
 # Firebase Admin SDK 
 import firebase_admin
@@ -64,7 +72,11 @@ print('============================================================')
 print('')
 print('Scanning..')
 print('')
-time.sleep(5) # sleep 60 seconds.
+
+# LCD Display: Checking schedules.
+grove_rgb_lcd.setRGB(100,255,255)
+grove_rgb_lcd.setText("Checking \n schedules..")
+time.sleep(10) # sleep 10 seconds.
 
 # Pill Plan for Box 1
 docData = dbfirestore.collection('pillPlan').where('boxID', '==', 'pillBox_1').stream()
@@ -123,11 +135,15 @@ for doc in docData:
                 Alert Event - Schedule Met
                 ----------------------------------
                 '''
+                # LCD Display: Schedule Met
+                grove_rgb_lcd.setRGB(0,255,0)
+                grove_rgb_lcd.setText("**** ALERT ****\nSchedule Due")
+                time.sleep(5)
+
                 # Alert Event triggered - RTDB alertState alert updated to True.
                 scheduleAlert = True
                 timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
 
-                
                 # Defined data variables to be sent to Firebase.
                 data = {
                     'alertType': 'scheduleAlert',
@@ -160,6 +176,16 @@ for doc in docData:
                 time.sleep(5)
                 print('')
                 print('Please take ',pillQuantity, ' pills from the highlighted compartment.')
+
+                # LCD Display: Compartment Alert
+                grove_rgb_lcd.setRGB(255,255,255)
+                grove_rgb_lcd.setText('Please Check\nPill Compartment')
+                time.sleep(5)
+
+                # LCD Display: Schedule Details
+                schedule_string = 'Pill: '+ pillType +'\nQuantity: '+ str(pillQuantity)
+                grove_rgb_lcd.setText(schedule_string)
+
                 # Light appropriate Pill Compartment depending on schedule compartment number.
                 if pillCompartment == 1:
                     GPIO.output(25, True) # Turn on Green LED
@@ -188,7 +214,13 @@ for doc in docData:
                     GPIO.output(25, False) # Turn off Green LED
                 break
 
+
             elif abs(pillTimeInMinutes-currentTimeMinutes)<=5 and pillDay == currentDay:
+                # LCD Display: Schedule Met
+                grove_rgb_lcd.setRGB(0,255,0)
+                grove_rgb_lcd.setText("**** ALERT ****\nSchedule Due.")
+                time.sleep(5)
+
                 print('')
                 print('Next schedule is near, dont forget to take your pills!')
                 print('+ Scheduled Time:', pillTime)
@@ -198,6 +230,16 @@ for doc in docData:
                 print('- Pill Type:', pillType)
                 print('- Pill Quantity:', pillQuantity)
                 print('+=================================================+')
+
+                # LCD Display: Compartment Alert
+                grove_rgb_lcd.setRGB(255,255,255)
+                grove_rgb_lcd.setText('Please Check\nPill Compartment')
+                time.sleep(5)
+
+                # LCD Display: Schedule Details
+                schedule_string = 'Pill: '+ pillType +'\nQuantity: '+ str(pillQuantity)
+                grove_rgb_lcd.setText(schedule_string)
+
                 if pillCompartment == 1:
                     GPIO.output(25, True) # Turn on Green LED
                     time.sleep(30) # Stay lit for 30 sec.
@@ -229,21 +271,24 @@ for doc in docData:
                     GPIO.output(25, False) # Turn off Green LED
                 break
 
-            elif currentBoxLidStatus == 1:
-                print('* Current BOX LID Status:', currentBoxLidStatus, '(Closed)')
-                break
             else:
-                print('* Current BOX LID Status:', currentBoxLidStatus, '(Open)')
+                # Exit the schedule check loop - no schedule is currently due.
                 break
 
     else:
         if currentBoxLidStatus == 0:
-            timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
-            print('\n Warning - Pillbox lid is open & no schedule is currently due! \n (', timestamp ,')')
             '''
             Warning (Red Alert) Event - Box opened outside of scheduled hours.
             --------------------------------------------------------------------------
             '''
+            timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
+            print('\n Warning - Pillbox lid is open & no schedule is currently due! \n (', timestamp ,')')
+
+            # LCD Display: Pillbox was opened outside of scheduled times!
+            grove_rgb_lcd.setRGB(255,183,41)
+            grove_rgb_lcd.setText("* Pillbox Open *\nNo Schedule Due")
+            time.sleep(5) # sleep 5 seconds.
+
             # Alert Event triggered - RTDB alertState alert updated to True.
             warningAlert = True
             timestamp = datetime.datetime.now().strftime('Time: %H:%M, Date: %d/%m/%Y')
@@ -265,9 +310,19 @@ for doc in docData:
             '''
             ---------------------------------------------------------------------------
             '''
+            # LCD Display: Checking schedules.
+            grove_rgb_lcd.setRGB(100,255,255)
+            grove_rgb_lcd.setText("Checking \n schedules..")
             break
-        else: 
-            print('\n All is well! No schedule is due at the moment.')
-        break
-        
 
+        else: 
+            print('No schedule is currently due - Until next time!')
+            # LCD Display: No schedule due.
+            grove_rgb_lcd.setRGB(255,255,255)
+            grove_rgb_lcd.setText("No schedule(s) \n currently due.")
+            time.sleep(10)
+
+            # LCD Display: Checking schedules.
+            grove_rgb_lcd.setRGB(100,255,255)
+            grove_rgb_lcd.setText("Checking \n schedules..")
+        break
