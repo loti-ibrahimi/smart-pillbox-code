@@ -75,7 +75,7 @@ data = {
         'pillQuantity': 2,
         'pillType': 'pill_4',
         'schedule_id': 'sched5comp4qt2',
-        'time': '16:30'
+        'time': '18:45'
     }
     ]
 }
