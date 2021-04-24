@@ -16,23 +16,29 @@ while True:
             # Checking schedules.
             grove_rgb_lcd.setRGB(100,255,255)
             grove_rgb_lcd.setText("Checking \n schedules..")
-            time.sleep(10) # sleep 60 seconds.
+            time.sleep(10) # sleep 10 seconds.
 
             # Schedule Met
-            grove_rgb_lcd.setText("**** ALERT ****\nSchedule Met")
             grove_rgb_lcd.setRGB(0,255,0)
+            grove_rgb_lcd.setText("**** ALERT ****\nSchedule Met")
             time.sleep(5)
 
             # Schedule Alert
             grove_rgb_lcd.setRGB(255,255,255)
-            grove_rgb_lcd.setText('Pill Compartment\nhas been lit.')
+            grove_rgb_lcd.setText('Please Check\nPill Compartment')
             time.sleep(10)
+
+            # Schedule Details
             pillType = 'pill_A'
             pillQuantity = 2
             lcd_string = 'Pill: '+ pillType +'\nQuantity: '+ str(pillQuantity)
-            # Schedule Details
             grove_rgb_lcd.setText(lcd_string)
             time.sleep(10)
+
+            # Checking schedules.
+            grove_rgb_lcd.setRGB(255,183,41)
+            grove_rgb_lcd.setText("* Pillbox Open *\nNo Schedule Met")
+            time.sleep(10) # sleep 10 seconds.
 
     except KeyboardInterrupt as e:
             # since we're exiting the program
