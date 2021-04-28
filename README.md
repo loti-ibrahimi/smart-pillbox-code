@@ -2,6 +2,8 @@
 Smart Pillbox Code - Box Sensor(s) / Pill Schedules
 ![alt text](https://github.com/loti-ibrahimi/smart-pillbox-code/blob/master/smart-pillbox.jpg)
 
+Youtube video demo link: https://www.youtube.com/watch?v=Me9RA-DJ_IE&ab_channel=LotiIbrahimi 
+
 ### Three main scripts (run on RaspberryPi startup using Crontab):
 - **pillbox_schedules.py**: script which checks and fetches database schedules; displays information on LCD and pushes events to a realtime databse (for different alerts).
 - **pillbox_senses.py**: script that reads the Hall-effect sensor data and sends events to the realtime database (is box lid **open** or **closed**).
